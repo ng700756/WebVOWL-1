@@ -31,12 +31,14 @@ module.exports = function (graph) {
 			datatypes = combineClasses(ontologyData.datatype, ontologyData.datatypeAttribute),
 			combinedClassesAndDatatypes = classes.concat(datatypes),
 			unparsedProperties = ontologyData.property || [],
-			combinedProperties;
+			combinedProperties, combinedIndividuals;
 
 		// Inject properties for unions, intersections, ...
 		addSetOperatorProperties(combinedClassesAndDatatypes, unparsedProperties);
 
 		combinedProperties = combineProperties(unparsedProperties, ontologyData.propertyAttribute);
+		combineIndividuals(unparsedProperties, ontologyData.class, combinedProperties); //by lim, recycle combinedProperties
+
 
 		classMap = mapElements(combinedClassesAndDatatypes);
 		propertyMap = mapElements(combinedProperties);
@@ -49,6 +51,7 @@ module.exports = function (graph) {
 
 		nodes = createNodeStructure(combinedClassesAndDatatypes, classMap);
 		properties = createPropertyStructure(combinedProperties, classMap, propertyMap);
+
 	};
 
 	/**
@@ -111,6 +114,7 @@ module.exports = function (graph) {
 						.iri(element.iri);
 
 					// Create node objects for all individuals
+					var individualiri = "";
 					if (element.individuals) {
 						element.individuals.forEach(function (individual) {
 							var individualNode = new Prototype(graph);
@@ -118,8 +122,20 @@ module.exports = function (graph) {
 								.iri(individual.iri);
 
 							node.individuals().push(individualNode);
+							individualiri = individual.iri;
 						});
 					}
+
+					// Add the individual to the  (by lim)
+					var nodeInividual = new Prototype(graph);
+					nodeInividual
+						.label(individualiri)
+						.id(individualiri)
+						.attributes(["datatype"])
+						.styleClass("literal")
+						.type("rdfs:Literal")
+						.iri("http://www.w3.org/2000/01/rdf-schema#Literal");
+					combinations.push(nodeInividual);
 
 					if (element.attributes) {
 						var deduplicatedAttributes = d3.set(element.attributes.concat(node.attributes()));
@@ -180,6 +196,7 @@ module.exports = function (graph) {
 						// .type(element.type) Ignore, because we predefined it
 						.iri(element.iri);
 
+
 					if (element.attributes) {
 						var deduplicatedAttributes = d3.set(element.attributes.concat(property.attributes()));
 						property.attributes(deduplicatedAttributes.values());
@@ -195,6 +212,37 @@ module.exports = function (graph) {
 
 		return combinations;
 	}
+
+	// By Lim
+	// TODO Include the node creation
+	function combineIndividuals(baseObjects, baseObjects2, combinations) {
+		var prototypepMap = createLowerCasePrototypeMap(propertyPrototypeMap);
+		var prototypenMap = createLowerCasePrototypeMap(nodePrototypeMap);
+
+		function setProperty(domain, range){
+			baseObjects.forEach(function (element) {
+				var Prototype = prototypepMap.get(element.type.toLowerCase());
+				var property = new Prototype(graph);
+				property.domain(domain).range(range).id(domain+range);
+				combinations.push(property);
+			});
+
+		};
+
+		if (baseObjects2) {
+			baseObjects2.forEach(function (element) {
+				//alert(element.id);
+				if (element.individuals) {
+					element.individuals.forEach(function (individual) {
+						setProperty(individual.iri, element.id);
+					});
+				}
+			});
+		}
+
+		return combinations;
+	}
+
 
 	function createLowerCasePrototypeMap(prototypeMap) {
 		return d3.map(prototypeMap.values(), function (Prototype) {

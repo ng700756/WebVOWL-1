@@ -13,10 +13,12 @@ module.exports = function () {
 		loadingProgress = d3.select("#loading-progress"),
 		ontologyMenuTimeout,
 		cachedConversions = {},
-		loadOntologyFromText;
+		loadOntologyFromText,
+		srcJson;
 
-	ontologyMenu.setup = function (_loadOntologyFromText) {
+	ontologyMenu.setup = function (_loadOntologyFromText, _srcJson) {
 		loadOntologyFromText = _loadOntologyFromText;
+		srcJson = _srcJson;
 
 		setupConverterButtons();
 		setupUploadButton();
@@ -123,15 +125,15 @@ module.exports = function () {
 				var loadingSuccessful = !error;
 				var errorInfo;
 
-				var jsonText;
-				if (loadingSuccessful) {
+				var jsonText = srcJson;
+				/*if (loadingSuccessful) {
 					jsonText = request.responseText;
 					cachedConversions[relativePath] = jsonText;
 				} else {
 					if (error.status === 404) {
 						errorInfo = "Connection to the OWL2VOWL interface could not be established.";
 					}
-				}
+				}*/
 
 				loadOntologyFromText(jsonText, undefined, filename);
 

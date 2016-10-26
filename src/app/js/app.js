@@ -32,7 +32,7 @@ module.exports = function () {
 		subclassFilter = webvowl.modules.subclassFilter(),
 		setOperatorFilter = webvowl.modules.setOperatorFilter();
 
-	app.initialize = function () {
+	app.initialize = function (srcJson) {
 		options.graphContainerSelector(GRAPH_SELECTOR);
 		options.selectionModules().push(focuser);
 		//options.selectionModules().push(selectionDetailDisplayer);
@@ -51,7 +51,7 @@ module.exports = function () {
 		d3.select(window).on("resize", adjustSize);
 
 
-		ontologyMenu.setup(loadOntologyFromText);
+		ontologyMenu.setup(loadOntologyFromText, srcJson);
 
 		//resetMenu.setup([gravityMenu, filterMenu, modeMenu, focuser, pauseMenu]);
 

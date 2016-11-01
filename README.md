@@ -40,3 +40,9 @@ inlines the styles - otherwise the exported SVG will not look the same as the di
 
 The tool which creates the code that inlines the styles can be found in the util directory. Please
 follow the instructions in its [README](util/VowlCssToD3RuleConverter/README.md) file.
+
+Running
+-----------------------
+* sudo npm install -g live-server
+* live-server
+

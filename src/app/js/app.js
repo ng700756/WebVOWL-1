@@ -5,7 +5,7 @@ module.exports = function () {
 		options = graph.graphOptions(),
 		languageTools = webvowl.util.languageTools(),
 		GRAPH_SELECTOR = "#graph",
-
+		container,
 		ontologyMenu = require("./menu/ontologyMenu")(graph),
 
 		// Modules for the webvowl app
@@ -54,8 +54,7 @@ module.exports = function () {
 		ontologyMenu.setup(loadOntologyFromText, srcJson);
 
 		//resetMenu.setup([gravityMenu, filterMenu, modeMenu, focuser, pauseMenu]);
-
-
+		container = d3.selectAll(GRAPH_SELECTOR).selectAll("*").empty();
 
 		graph.start();
 		adjustSize();

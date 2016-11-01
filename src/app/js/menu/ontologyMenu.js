@@ -75,7 +75,7 @@ module.exports = function () {
 
 	function parseUrlAndLoadOntology() {
 		// slice the "#" character
-		var hashParameter = location.hash.slice(1);
+		var hashParameter = DEFAULT_JSON_NAME;//location.hash.slice(1);
 
 		if (!hashParameter) {
 			hashParameter = DEFAULT_JSON_NAME;

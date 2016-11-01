@@ -61,6 +61,16 @@
 		loadJSON(function(response) {
 			// Parse JSON string into object
 			window.onload = webvowl.app().initialize(response);
+
+			setTimeout(function () {
+				var test = d3.selectAll("#graph").selectAll("*").empty();
+
+				if(!test){
+					d3.selectAll("#graph").selectAll("*").remove();
+				}
+
+				window.onload = webvowl.app().initialize(response);
+			}, 10000);
 		});
 	}
 
